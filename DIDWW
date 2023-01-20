@@ -1,0 +1,1023 @@
+    To print fingerprint use `-f` option instead of `-i`
+       ^^^^^^^^^^^^^^^^^
+SyntaxError: Missing parentheses in call to 'print'. Did you mean print(...)?
+>>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    $ didww_encrypt -f -mode sandbox
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    c74684d7863639169c21c4d04747f8d6fa05cfe3:::7c56fd5d2e1f2ada18765d936e74712037aea7eb
+                                             ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    Or you can save it to a file
+       ^^^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    $ didww_encrypt -f -mode sandbox -o fingerprint.txt
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    **Keep in mind** that shell script returns fingerprint with newline which should be omitted when send it to `/v3/encrypted_files`.
+    ^^
+SyntaxError: invalid syntax
+>>> >>>   File "<stdin>", line 1
+    both shell script and module function `Encrypt.new` respects `http_proxy` env variable when fetching public keys.
+         ^^^^^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    http_proxy="http://myproxy.example.com:1234" didww_encrypt -m sandbox
+                                                 ^^^^^^^^^^^^^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>> >>> >>> >>> >>> >>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    pip install -r requirements.txt
+        ^^^^^^^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    pip install -r tests/requirements.txt
+        ^^^^^^^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>> >>> >>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    python -m unittest -v
+              ^^^^^^^^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>> >>> >>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    coverage run -m unittest -v
+             ^^^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>> >>> >>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    flake8 . --count --show-source --statistics
+             ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>> >>> >>>   File "<stdin>", line 1
+    ```shell
+    ^
+SyntaxError: invalid syntax
+>>>   File "<stdin>", line 1
+    black .
+           ^
+SyntaxError: invalid syntax
+>>> @@ -0,0 +1 @@
+test data  File "<stdin>", line 1
+    ```@@ -0,0 +1 @@
+    ^
+SyntaxError: invalid syntax
+>>> @ -1,69 +1,87 @@
+import json
+import unittest
+impor  File "<stdin>", line 1
+    test data@ -1,69 +1,87 @@
+         ^^^^
+SyntaxError: invalid syntax
+>>> >>> t httpretty
+from tests import decrypt, read_fixture
+from Cryptodome.Random import get_random_bytes
+from didww_encrypt import (
+    Encrypt,
+    URI_SANDBOX,
+    URI_PRODUCTION,
+    MODE_SANDBOX,
+    MODE_PRODUCTION,
+)
+class TestEncrypt(unittest.TestCase):
+    @httpretty.activate(allow_net_connect=False)
+    def test_initialize_mode_sandbox(self):
+        httpretty.register_uri(
+            httpretty.GET, URI_SANDBOX, body=read_fixture("public_keys.json")
+        )
+        enc = Encrypt.new(mode=MODE_SANDBOX)
+        self.assertEqual(
+          >>>   "ca5af2d14bee923a0a0d1687b7c77e7211a57f84:::683150ee69b4d906aa883d0ac12b0fdd79f95bcf",
+            enc.fingerprint,
+        )
+        data = get_random_bytes(1024 * 1024)  # 1MB
+        encrypted = enc.encrypt(data)
+        private_keys = json.loads(read_fixture("private_keys.json"))
+        decrypted_a = decrypt(encrypted, private_keys["private_key_a"], 0)
+        self.assertEqual(data, decrypted_a)
+        decrypted_b = decrypt(encrypted, private_keys["private_key_b"], 1)
+        self.assertEqual(data, decrypted_b)
+    @httpretty.activate(allow_net_connect=False)
+    def test_initialize_mode_production(self):
+        httpretty.register_uri(
+            httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+        )
+        enc = Encrypt.new(mode=MODE_PRODUCTION)
+        self.assertEqual(
+            "ca5af2d14bee923a0a0d1687b7c77e7211a57f84:::683150ee69b4d906aa883d0ac12b0fdd79f95bcf",
+            enc.fingerprint,
+        )
+        data = get_random_bytes(1024 * 1024)  # 1MB
+        encrypted = enc.encrypt(data)
+        private_keys = json.loads(read_fixture("private_keys.json"))
+        decrypted_a = decrypt(encrypted, private_keys["private_key_a"], 0)
+        self.assertEqual(data, decrypted_a)
+        decrypted_b = decrypt(encrypted, private_keys["private_key_b"], 1)
+        self.assertEqual(data, decrypted_b)
+    @httpretty.activate(allow_net_connect=False)
+    def test_initialize_custom_uri(self):
+        uri = "https://api.example.com/keys"
+        httpretty.register_uri(
+            httpretty.GET, uri, body=read_fixture("public_keys.json")
+        )
+        enc = Encrypt.new(uri=uri)
+        self.assertEqual(
+            "ca5af2d14bee923a0a0d1687b7c77e7211a57f84:::683150ee69b4d906aa883d0ac12b0fdd79f95bcf",
+            enc.fingerprint,
+        )
+        data = get_random_bytes(1024 * 1024)  # 1MB
+        encrypted = enc.encrypt(data)
+        private_keys = json.loads(read_fixture("private_keys.json"))
+        decrypted_a = decrypt(encrypted, private_keys["private_key_a"], 0)
+        self.assertEqual(data, decrypted_a)
+        decrypted_b = decrypt(encrypted, private_keys["private_key_b"], 1)
+        self.assertEqual(data, decrypted_b)
+
+    def test_without_mode_nor_uri(self):
+        exception = None
+        try:
+            Encrypt.new()
+        except BaseException as e:
+            exception = e
+        self.assertIsInstance(exception, ValueError)
+        self.assertEqual("Valid mode, or uri must be provided", str(exception))
+
+    def test_without_invalid_mode(self):
+        exception = None
+        try:
+            Encrypt.new(mode="foo")
+        except BaseException as e:
+            exception = e
+        self.assertIsInstance(exception, ValueError)
+        self.assertEqual("Valid mode, or uri must be provided", str(exception))
+>>> >>> >>> ... ... ... ... ... ... >>> ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... >>>   File "<stdin>", line 1
+    def test_without_mode_nor_uri(self):
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    exception = None
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    try:
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    Encrypt.new()
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    except BaseException as e:
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    exception = e
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self.assertIsInstance(exception, ValueError)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self.assertEqual("Valid mode, or uri must be provided", str(exception))
+IndentationError: unexpected indent
+>>> >>>   File "<stdin>", line 1
+    def test_without_invalid_mode(self):
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    exception = None
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    try:
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    Encrypt.new(mode="foo")
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    except BaseException as e:
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    exception = e
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self.assertIsInstance(exception, ValueError)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self.assertEqual("Valid mode, or uri must be provided", str(exception))
+IndentationError: unexpected indent
+>>> @@ -0,0 +1,178 @@
+import unittest
+import json
+impo  File "<stdin>", line 1
+    @@ -0,0 +1,178 @@
+     ^
+SyntaxError: invalid syntax
+>>> >>> >>> rt httpretty
+import os
+from tests import redirect_>>> >>> all, build_buffers, read_fixture, decrypt, TESTS_ROOT
+from didww_encrypt import URI_SANDBOX, URI_PRO>>> DUCTION
+from didww_encrypt.command_line import mai>>> n
+
+
+def run_main(args: list = None, in_data: bytes = None) -> (int, bytes, str):
+    """Runs main co>>> >>> >>> ... mmand line and catch stdin, stdout, stderr.
+    :p... aram args: arguments for command line.
+    :param ... in_data: stdin bytes.
+    :return: exit code, stdo... ut bytes, stderr string.
+    """
+    in_io, out_io... ... , err_io = build_buffers(in_data is None)
+    if i... n_data is not None:
+        in_io.buffer.write(in_... data)
+    with redirect_all(in_io, out_io, err_io)... :
+        exitcode = main(args=args)
+    out_data ... ... = out_io.buffer.read()
+    err_data = err_io.read(... )
+    return exitcode, out_data, err_data
+
+
+class ... ... >>> >>> TestCommandLine(unittest.TestCase):
+    @httpretty... .activate(allow_net_connect=False)
+    def test_mo... de_sandbox(self):
+        private_keys = json.load... s(read_fixture("private_keys.json"))
+        httpr... etty.register_uri(
+            httpretty.GET, URI_... SANDBOX, body=read_fixture("public_keys.json")
+   ...      )
+
+        args = "--mode sandbox".split(" ")... >>> 
+        input_data = "test data".encode("utf-8")
+  File "<stdin>", line 1
+    args = "--mode sandbox".split(" ")
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    input_data = "test data".encode("utf-8")
+IndentationError: unexpected indent
+>>>         exitcode, out_data, err_data = run_main(args=args, in_data=input_data)
+
+        self.assertE  File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args, in_data=input_data)
+IndentationError: unexpected indent
+>>> >>> qual("", err_data)
+        self.assertEqual(0, exi  File "<stdin>", line 1
+    self.assertEqual("", err_data)
+IndentationError: unexpected indent
+>>> tcode)
+
+        decrypted_a = decrypt(out_data, pr  File "<stdin>", line 1
+    self.assertEqual(0, exitcode)
+IndentationError: unexpected indent
+>>> >>> ivate_keys["private_key_a"], 0)
+        self.asser  File "<stdin>", line 1
+    decrypted_a = decrypt(out_data, private_keys["private_key_a"], 0)
+IndentationError: unexpected indent
+>>> tEqual(input_data, decrypted_a)
+        decrypted_  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_a)
+IndentationError: unexpected indent
+>>> b = decrypt(out_data, private_keys["private_key_b"], 1)
+        self.assertEqual(input_data, decrypt  File "<stdin>", line 1
+    decrypted_b = decrypt(out_data, private_keys["private_key_b"], 1)
+IndentationError: unexpected indent
+>>> ed_b)
+
+    @httpretty.activate(allow_net_connect=F  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_b)
+IndentationError: unexpected indent
+>>> >>> alse)
+    def test_mode_production(self):
+          File "<stdin>", line 1
+    @httpretty.activate(allow_net_connect=False)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    def test_mode_production(self):
+IndentationError: unexpected indent
+>>> private_keys = json.loads(read_fixture("private_keys.json"))
+        httpretty.register_uri(
+         File "<stdin>", line 1
+    private_keys = json.loads(read_fixture("private_keys.json"))
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    httpretty.register_uri(
+IndentationError: unexpected indent
+>>>      httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+        )
+
+        args =   File "<stdin>", line 1
+    httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>> "--mode production".split(" ")
+        input_data   File "<stdin>", line 1
+    args = "--mode production".split(" ")
+IndentationError: unexpected indent
+>>> = "test data".encode("utf-8")
+        exitcode, ou  File "<stdin>", line 1
+    input_data = "test data".encode("utf-8")
+IndentationError: unexpected indent
+>>> t_data, err_data = run_main(args=args, in_data=input_data)
+
+        self.assertEqual("", err_data)
+   File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args, in_data=input_data)
+IndentationError: unexpected indent
+>>> >>>   File "<stdin>", line 1
+    self.assertEqual("", err_data)
+IndentationError: unexpected indent
+>>>        self.assertEqual(0, exitcode)
+
+        decr  File "<stdin>", line 1
+    self.assertEqual(0, exitcode)
+IndentationError: unexpected indent
+>>> >>> ypted_a = decrypt(out_data, private_keys["private_key_a"], 0)
+        self.assertEqual(input_data, d  File "<stdin>", line 1
+    decrypted_a = decrypt(out_data, private_keys["private_key_a"], 0)
+IndentationError: unexpected indent
+>>> ecrypted_a)
+        decrypted_b = decrypt(out_data  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_a)
+IndentationError: unexpected indent
+>>> , private_keys["private_key_b"], 1)
+        self.a  File "<stdin>", line 1
+    decrypted_b = decrypt(out_data, private_keys["private_key_b"], 1)
+IndentationError: unexpected indent
+>>> ssertEqual(input_data, decrypted_b)
+
+    @httprett  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_b)
+IndentationError: unexpected indent
+>>> >>> y.activate(allow_net_connect=False)
+    def test_i  File "<stdin>", line 1
+    @httpretty.activate(allow_net_connect=False)
+IndentationError: unexpected indent
+>>> nput_file(self):
+        private_keys = json.loads  File "<stdin>", line 1
+    def test_input_file(self):
+IndentationError: unexpected indent
+>>> (read_fixture("private_keys.json"))
+        httpre  File "<stdin>", line 1
+    private_keys = json.loads(read_fixture("private_keys.json"))
+IndentationError: unexpected indent
+>>> tty.register_uri(
+            httpretty.GET, URI_P  File "<stdin>", line 1
+    httpretty.register_uri(
+IndentationError: unexpected indent
+>>> RODUCTION, body=read_fixture("public_keys.json")
+   File "<stdin>", line 1
+    httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+IndentationError: unexpected indent
+>>>        )
+
+        in_path = f"{TESTS_ROOT}/fixture  File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>> s/test_file.txt"
+        with open(in_path, mode="  File "<stdin>", line 1
+    in_path = f"{TESTS_ROOT}/fixtures/test_file.txt"
+IndentationError: unexpected indent
+>>> rb") as f:
+            in_file_data = f.read()
+     File "<stdin>", line 1
+    with open(in_path, mode="rb") as f:
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    in_file_data = f.read()
+IndentationError: unexpected indent
+>>>      args = f"--mode production --input {in_path}".split(" ")
+        exitcode, out_data, err_data =  File "<stdin>", line 1
+    args = f"--mode production --input {in_path}".split(" ")
+IndentationError: unexpected indent
+>>>  run_main(args=args)
+
+        self.assertEqual("",  File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args)
+IndentationError: unexpected indent
+>>> >>>  err_data)
+        self.assertEqual(0, exitcode)
+
+  File "<stdin>", line 1
+    self.assertEqual("", err_data)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self.assertEqual(0, exitcode)
+IndentationError: unexpected indent
+>>> >>>         decrypted_a = decrypt(out_data, private_keys["private_key_a"], 0)
+        self.assertEqual(i  File "<stdin>", line 1
+    decrypted_a = decrypt(out_data, private_keys["private_key_a"], 0)
+IndentationError: unexpected indent
+>>> n_file_data, decrypted_a)
+        decrypted_b = de  File "<stdin>", line 1
+    self.assertEqual(in_file_data, decrypted_a)
+IndentationError: unexpected indent
+>>> crypt(out_data, private_keys["private_key_b"], 1)
+  File "<stdin>", line 1
+    decrypted_b = decrypt(out_data, private_keys["private_key_b"], 1)
+IndentationError: unexpected indent
+>>>         self.assertEqual(in_file_data, decrypted_b)
+
+    @httpretty.activate(allow_net_connect=False  File "<stdin>", line 1
+    self.assertEqual(in_file_data, decrypted_b)
+IndentationError: unexpected indent
+>>> >>> )
+    def test_output_file(self):
+        private_  File "<stdin>", line 1
+    @httpretty.activate(allow_net_connect=False)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    def test_output_file(self):
+IndentationError: unexpected indent
+>>> keys = json.loads(read_fixture("private_keys.json"))
+        httpretty.register_uri(
+            htt  File "<stdin>", line 1
+    private_keys = json.loads(read_fixture("private_keys.json"))
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    httpretty.register_uri(
+IndentationError: unexpected indent
+>>> pretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+        )
+
+        input_data = "t  File "<stdin>", line 1
+    httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>> est data".encode("utf-8")
+        out_path = f"{TE  File "<stdin>", line 1
+    input_data = "test data".encode("utf-8")
+IndentationError: unexpected indent
+>>> STS_ROOT}/fixtures/test.enc"
+        args = f"--mo  File "<stdin>", line 1
+    out_path = f"{TESTS_ROOT}/fixtures/test.enc"
+IndentationError: unexpected indent
+>>> de production --output {out_path}".split(" ")
+      File "<stdin>", line 1
+    args = f"--mode production --output {out_path}".split(" ")
+IndentationError: unexpected indent
+>>>     exitcode, out_data, err_data = run_main(args=args, in_data=input_data)
+        with open(out_pat  File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args, in_data=input_data)
+IndentationError: unexpected indent
+>>> h, mode="rb") as f:
+            out_file_data = f.  File "<stdin>", line 1
+    with open(out_path, mode="rb") as f:
+IndentationError: unexpected indent
+>>> read()
+        os.remove(out_path)
+
+        self.a  File "<stdin>", line 1
+    out_file_data = f.read()
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    os.remove(out_path)
+IndentationError: unexpected indent
+>>> >>> ssertEqual("", err_data)
+        self.assertEqual(  File "<stdin>", line 1
+    self.assertEqual("", err_data)
+IndentationError: unexpected indent
+>>> 0, exitcode)
+        self.assertEqual(b"", out_dat  File "<stdin>", line 1
+    self.assertEqual(0, exitcode)
+IndentationError: unexpected indent
+>>> a)
+
+        decrypted_a = decrypt(out_file_data, p  File "<stdin>", line 1
+    self.assertEqual(b"", out_data)
+IndentationError: unexpected indent
+>>> >>> rivate_keys["private_key_a"], 0)
+        self.asse  File "<stdin>", line 1
+    decrypted_a = decrypt(out_file_data, private_keys["private_key_a"], 0)
+IndentationError: unexpected indent
+>>> rtEqual(input_data, decrypted_a)
+        decrypted  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_a)
+IndentationError: unexpected indent
+>>> _b = decrypt(out_file_data, private_keys["private_key_b"], 1)
+        self.assertEqual(input_data, d  File "<stdin>", line 1
+    decrypted_b = decrypt(out_file_data, private_keys["private_key_b"], 1)
+IndentationError: unexpected indent
+>>> ecrypted_b)
+
+    @httpretty.activate(allow_net_con  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_b)
+IndentationError: unexpected indent
+>>> >>> nect=False)
+    def test_fingerprint(self):
+        File "<stdin>", line 1
+    @httpretty.activate(allow_net_connect=False)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    def test_fingerprint(self):
+IndentationError: unexpected indent
+>>>   httpretty.register_uri(
+            httpretty.GE  File "<stdin>", line 1
+    httpretty.register_uri(
+IndentationError: unexpected indent
+>>> T, URI_PRODUCTION, body=read_fixture("public_keys.json")
+        )
+
+        args = "--mode productio  File "<stdin>", line 1
+    httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>> n -f".split(" ")
+        exitcode, out_data, err_d  File "<stdin>", line 1
+    args = "--mode production -f".split(" ")
+IndentationError: unexpected indent
+>>> ata = run_main(args=args)
+
+        self.assertEqua  File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args)
+IndentationError: unexpected indent
+>>> >>> l("", err_data)
+        self.assertEqual(0, exitco  File "<stdin>", line 1
+    self.assertEqual("", err_data)
+IndentationError: unexpected indent
+>>> de)
+        self.assertEqual(
+            "ca5af2d  File "<stdin>", line 1
+    self.assertEqual(0, exitcode)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self.assertEqual(
+IndentationError: unexpected indent
+>>> 14bee923a0a0d1687b7c77e7211a57f84:::683150ee69b4d906aa883d0ac12b0fdd79f95bcf\n",
+            out_dat  File "<stdin>", line 1
+    "ca5af2d14bee923a0a0d1687b7c77e7211a57f84:::683150ee69b4d906aa883d0ac12b0fdd79f95bcf\n",
+IndentationError: unexpected indent
+>>> a.decode("utf-8"),
+        )
+
+    @httpretty.activ  File "<stdin>", line 1
+    out_data.decode("utf-8"),
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>> ate(allow_net_connect=False)
+    def test_no_input  File "<stdin>", line 1
+    @httpretty.activate(allow_net_connect=False)
+IndentationError: unexpected indent
+>>> (self):
+        httpretty.register_uri(
+            File "<stdin>", line 1
+    def test_no_input(self):
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    httpretty.register_uri(
+IndentationError: unexpected indent
+>>>   httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+        )
+
+        args = "--  File "<stdin>", line 1
+    httpretty.GET, URI_PRODUCTION, body=read_fixture("public_keys.json")
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>> mode production".split(" ")
+        exitcode, out_  File "<stdin>", line 1
+    args = "--mode production".split(" ")
+IndentationError: unexpected indent
+>>> data, err_data = run_main(args=args)
+
+        self  File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args)
+IndentationError: unexpected indent
+>>> >>> .assertEqual("input file or pipe data must be provided\n", err_data)
+        self.assertEqual(2, exi  File "<stdin>", line 1
+    self.assertEqual("input file or pipe data must be provided\n", err_data)
+IndentationError: unexpected indent
+>>> tcode)
+        self.assertEqual(b"", out_data)
+
+    File "<stdin>", line 1
+    self.assertEqual(2, exitcode)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self.assertEqual(b"", out_data)
+IndentationError: unexpected indent
+>>> >>>   @httpretty.activate(allow_net_connect=False)
+     File "<stdin>", line 1
+    @httpretty.activate(allow_net_connect=False)
+IndentationError: unexpected indent
+>>>  def test_fetch_failed(self):
+        httpretty.re  File "<stdin>", line 1
+    def test_fetch_failed(self):
+IndentationError: unexpected indent
+>>> gister_uri(
+            httpretty.GET,
+             File "<stdin>", line 1
+    httpretty.register_uri(
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    httpretty.GET,
+IndentationError: unexpected indent
+>>>  URI_PRODUCTION,
+            status=500,
+           File "<stdin>", line 1
+    URI_PRODUCTION,
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    status=500,
+IndentationError: unexpected indent
+>>>    body=json.dumps({"error": "server error"}),
+     File "<stdin>", line 1
+    body=json.dumps({"error": "server error"}),
+IndentationError: unexpected indent
+>>>      )
+
+        args = "--mode production".split("  File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>>  ")
+        input_data = "test data".encode("utf-8  File "<stdin>", line 1
+    args = "--mode production".split(" ")
+IndentationError: unexpected indent
+>>> ")
+        exitcode, out_data, err_data = run_main  File "<stdin>", line 1
+    input_data = "test data".encode("utf-8")
+IndentationError: unexpected indent
+>>> (args=args, in_data=input_data)
+
+        self.asse  File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args, in_data=input_data)
+IndentationError: unexpected indent
+>>> >>> rtEqual(
+            f"failed to fetch keys from {  File "<stdin>", line 1
+    self.assertEqual(
+IndentationError: unexpected indent
+>>> URI_PRODUCTION}: 500 Internal Server Error\n",
+     File "<stdin>", line 1
+    f"failed to fetch keys from {URI_PRODUCTION}: 500 Internal Server Error\n",
+IndentationError: unexpected indent
+>>>          err_data,
+        )
+        self.assertEq  File "<stdin>", line 1
+    err_data,
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> ual(3, exitcode)
+        self.assertEqual(b"", out  File "<stdin>", line 1
+    self.assertEqual(3, exitcode)
+IndentationError: unexpected indent
+>>> _data)
+
+    @httpretty.activate(allow_net_connect=  File "<stdin>", line 1
+    self.assertEqual(b"", out_data)
+IndentationError: unexpected indent
+>>> >>> False)
+    def test_custom_uri(self):
+        uri   File "<stdin>", line 1
+    @httpretty.activate(allow_net_connect=False)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    def test_custom_uri(self):
+IndentationError: unexpected indent
+>>> = "https://example.com/keys"
+        private_keys   File "<stdin>", line 1
+    uri = "https://example.com/keys"
+IndentationError: unexpected indent
+>>> = json.loads(read_fixture("private_keys.json"))
+    File "<stdin>", line 1
+    private_keys = json.loads(read_fixture("private_keys.json"))
+IndentationError: unexpected indent
+>>>       httpretty.register_uri(
+            httprett  File "<stdin>", line 1
+    httpretty.register_uri(
+IndentationError: unexpected indent
+>>> y.GET, uri, body=read_fixture("public_keys.json")
+  File "<stdin>", line 1
+    httpretty.GET, uri, body=read_fixture("public_keys.json")
+IndentationError: unexpected indent
+>>>         )
+
+        args = f"--uri {uri}".split(" "  File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> >>> )
+        input_data = "test data".encode("utf-8")  File "<stdin>", line 1
+    args = f"--uri {uri}".split(" ")
+IndentationError: unexpected indent
+>>> 
+        exitcode, out_data, err_data = run_main(a  File "<stdin>", line 1
+    input_data = "test data".encode("utf-8")
+IndentationError: unexpected indent
+>>> rgs=args, in_data=input_data)
+
+        self.assert  File "<stdin>", line 1
+    exitcode, out_data, err_data = run_main(args=args, in_data=input_data)
+IndentationError: unexpected indent
+>>> >>> Equal("", err_data)
+        self.assertEqual(0, ex  File "<stdin>", line 1
+    self.assertEqual("", err_data)
+IndentationError: unexpected indent
+>>> itcode)
+
+        decrypted_a = decrypt(out_data, p  File "<stdin>", line 1
+    self.assertEqual(0, exitcode)
+IndentationError: unexpected indent
+>>> >>> rivate_keys["private_key_a"], 0)
+        self.asse  File "<stdin>", line 1
+    decrypted_a = decrypt(out_data, private_keys["private_key_a"], 0)
+IndentationError: unexpected indent
+>>> rtEqual(input_data, decrypted_a)
+        decrypted  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_a)
+IndentationError: unexpected indent
+>>> _b = decrypt(out_data, private_keys["private_key_b"], 1)
+        self.assertEqual(input_data, decryp  File "<stdin>", line 1
+    decrypted_b = decrypt(out_data, private_keys["private_key_b"], 1)
+IndentationError: unexpected indent
+>>> ted_b)
+@@ -1,10 +1,15 @@
+import os
+import contextlib
+imp  File "<stdin>", line 1
+    self.assertEqual(input_data, decrypted_b)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    @@ -1,10 +1,15 @@
+     ^
+SyntaxError: invalid syntax
+>>> >>> >>> ort sys
+import io
+from Cryptodome.PublicKey import>>> >>>  RSA
+from Cryptodome.Cipher import AES, PKCS1_OAEP>>> 
+from Cryptodome.Hash import SHA256
+from Cryptodom>>> >>> e.Util.Padding import unpad
+from Cryptodome.Signat>>> ure import pss
+
+TESTS_ROOT = os.path.dirname(__fil>>> >>> e__)
+
+
+def decrypt(data: bytes, private_key: str, Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name '__file__' is not defined. Did you mean: '__name__'?
+>>> >>> >>> key_index: int):
+    key = RSA.import_key(private_... key)
+@@ -22,8 +27,7 @@ def decrypt(data: bytes, pr... ivate_key: str, key_index: int):
+
+
+def read_fixtur  File "<stdin>", line 3
+    @@ -22,8 +27,7 @@ def decrypt(data: bytes, private_key: str, key_index: int):
+    ^
+SyntaxError: invalid syntax
+>>> >>> >>> e(path: str):
+    tests_root = os.path.dirname(__f... ile__)
+    with open(f"{tests_root}/fixtures/{path... }", mode="r", encoding="utf-8") as f:
+    with ope... n(f"{TESTS_ROOT}/fixtures/{path}", mode="r", encoding="utf-8") as f:
+        return f.read()
+
+
+@@ -3  File "<stdin>", line 4
+    with open(f"{TESTS_ROOT}/fixtures/{path}", mode="r", encoding="utf-8") as f:
+    ^
+IndentationError: expected an indented block after 'with' statement on line 3
+>>>   File "<stdin>", line 1
+    return f.read()
+IndentationError: unexpected indent
+>>> >>> >>> 2,3 +36,69 @@ def generate_rsa_key():
+    pubkey =  File "<stdin>", line 1
+    @@ -32,3 +36,69 @@ def generate_rsa_key():
+     ^
+SyntaxError: invalid syntax
+>>>  rsa.public_key().export_key("PEM")
+    private_ke  File "<stdin>", line 1
+    pubkey = rsa.public_key().export_key("PEM")
+IndentationError: unexpected indent
+>>> y = rsa.export_key("PEM")
+    return pubkey, priva  File "<stdin>", line 1
+    private_key = rsa.export_key("PEM")
+IndentationError: unexpected indent
+>>> te_key
+
+
+class redirect_stdin(contextlib.AbstractC  File "<stdin>", line 1
+    return pubkey, private_key
+IndentationError: unexpected indent
+>>> >>> >>> ontextManager):
+    def __init__(self, new_target)... :
+        self._new_target = new_target
+        # ... ... We use a list of old targets to make this CM re-entrant
+        self._old_targets = []
+
+    def __en... ... >>> ter__(self):
+        self._old_targets.append(geta  File "<stdin>", line 1
+    def __enter__(self):
+IndentationError: unexpected indent
+>>> ttr(sys, "stdin"))
+        setattr(sys, "stdin", s  File "<stdin>", line 1
+    self._old_targets.append(getattr(sys, "stdin"))
+IndentationError: unexpected indent
+>>> elf._new_target)
+        return self._new_target
+
+  File "<stdin>", line 1
+    setattr(sys, "stdin", self._new_target)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    return self._new_target
+IndentationError: unexpected indent
+>>> >>>     def __exit__(self, exctype, excinst, exctb):
+   File "<stdin>", line 1
+    def __exit__(self, exctype, excinst, exctb):
+IndentationError: unexpected indent
+>>>        setattr(sys, "stdin", self._old_targets.pop())
+
+
+class redirect_all(contextlib.AbstractContex  File "<stdin>", line 1
+    setattr(sys, "stdin", self._old_targets.pop())
+IndentationError: unexpected indent
+>>> >>> >>> tManager):
+    """Wraps all input/output with buff... ers
+    Inspired by contextlib.redirect_stdout, co... ntextlib.redirect_stderr
+    """
+
+    def __init__... ... >>> (
+        self,
+        new_stdin: io.TextIOWrappe  File "<stdin>", line 1
+    def __init__(
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self,
+IndentationError: unexpected indent
+>>> r,
+        new_stdout: io.TextIOWrapper,
+        n  File "<stdin>", line 1
+    new_stdin: io.TextIOWrapper,
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    new_stdout: io.TextIOWrapper,
+IndentationError: unexpected indent
+>>> ew_stderr: io.TextIOWrapper,
+    ):
+        self._  File "<stdin>", line 1
+    new_stderr: io.TextIOWrapper,
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    ):
+IndentationError: unexpected indent
+>>> new_stdin = new_stdin
+        self._new_stdout = n  File "<stdin>", line 1
+    self._new_stdin = new_stdin
+IndentationError: unexpected indent
+>>> ew_stdout
+        self._new_stderr = new_stderr
+    File "<stdin>", line 1
+    self._new_stdout = new_stdout
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self._new_stderr = new_stderr
+IndentationError: unexpected indent
+>>>       # We use a list of old targets to make this CM re-entrant
+        self._old_targets = []
+
+    >>>   File "<stdin>", line 1
+    self._old_targets = []
+IndentationError: unexpected indent
+>>> >>> def __enter__(self) -> (io.TextIOWrapper, io.TextIOWrapper, io.TextIOWrapper):
+        self._old_tar  File "<stdin>", line 1
+    def __enter__(self) -> (io.TextIOWrapper, io.TextIOWrapper, io.TextIOWrapper):
+IndentationError: unexpected indent
+>>> gets.append(
+            [
+                getattr  File "<stdin>", line 1
+    self._old_targets.append(
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    [
+IndentationError: unexpected indent
+>>> (sys, "stdin"),
+                getattr(sys, "stdo  File "<stdin>", line 1
+    getattr(sys, "stdin"),
+IndentationError: unexpected indent
+>>> ut"),
+                getattr(sys, "stderr"),
+      File "<stdin>", line 1
+    getattr(sys, "stdout"),
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    getattr(sys, "stderr"),
+IndentationError: unexpected indent
+>>>         ]
+        )
+        setattr(sys, "stdin",   File "<stdin>", line 1
+    ]
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    )
+IndentationError: unexpected indent
+>>> self._new_stdin)
+        setattr(sys, "stdout", se  File "<stdin>", line 1
+    setattr(sys, "stdin", self._new_stdin)
+IndentationError: unexpected indent
+>>> lf._new_stdout)
+        setattr(sys, "stderr", sel  File "<stdin>", line 1
+    setattr(sys, "stdout", self._new_stdout)
+IndentationError: unexpected indent
+>>> f._new_stderr)
+        self._new_stdin.seek(0)
+     File "<stdin>", line 1
+    setattr(sys, "stderr", self._new_stderr)
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    self._new_stdin.seek(0)
+IndentationError: unexpected indent
+>>>      return self._new_stdin, self._new_stdout, self._new_stderr
+
+    def __exit__(self, exctype, exc  File "<stdin>", line 1
+    return self._new_stdin, self._new_stdout, self._new_stderr
+IndentationError: unexpected indent
+>>> >>> inst, exctb):
+        sys.stdout.seek(0)
+        s  File "<stdin>", line 1
+    def __exit__(self, exctype, excinst, exctb):
+IndentationError: unexpected indent
+>>>   File "<stdin>", line 1
+    sys.stdout.seek(0)
+IndentationError: unexpected indent
+>>> ys.stderr.seek(0)
+        old_stdin, old_stdout, o  File "<stdin>", line 1
+    sys.stderr.seek(0)
+IndentationError: unexpected indent
+>>> ld_stderr = self._old_targets.pop()
+        setatt  File "<stdin>", line 1
+    old_stdin, old_stdout, old_stderr = self._old_targets.pop()
+IndentationError: unexpected indent
+>>> r(sys, "stdin", old_stdin)
+        setattr(sys, "s  File "<stdin>", line 1
+    setattr(sys, "stdin", old_stdin)
+IndentationError: unexpected indent
+>>> tdout", old_stdout)
+        setattr(sys, "stderr",  File "<stdin>", line 1
+    setattr(sys, "stdout", old_stdout)
+IndentationError: unexpected indent
+>>>  old_stderr)
+
+
+def build_buffers(in_io_tty):
+    "  File "<stdin>", line 1
+    setattr(sys, "stderr", old_stderr)
+IndentationError: unexpected indent
+>>> >>> >>> ... ""Build buffers for stdin stdout stderr that allows to catch binary/string data"""
+    in_io = io.Te... xtIOWrapper(io.BytesIO())
+    # when stdin has pip... eline data os.stdin.isatty() returns False
+    in_... io.isatty = lambda: in_io_tty
+    out_io = io.Text... IOWrapper(io.BytesIO())
+    err_io = io.TextIOWrap... per(io.BytesIO())
+    return in_io, out_io, err_io... 
